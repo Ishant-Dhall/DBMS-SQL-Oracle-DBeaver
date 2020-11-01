@@ -1,0 +1,176 @@
+Following are the answers for the DBMS query questions:
+
+1.select *
+from employee
+
+2.select ssn,lname,fname,address
+from employee
+where dno=5
+
+3.select fname||' '||minit||'. '||lname as Name,bdate,address
+from employee
+where fname='Franklin' and minit='T'and lname='Wong'
+
+4.select fname||' '||minit||'. '||lname as Name,salary
+from employee
+
+5.select distinct salary
+from employee
+
+6.select fname||' '||minit||'. '||lname as Name,address
+from employee
+where address like '%Bellaire%'
+
+7.1.select fname,bdate
+from employee
+where bdate between '01/Jan/1950' and '31/Dec/1959'
+
+7.2.(Alternate solution)
+select fname,bdate
+from employee
+where bdate like '_______5_'
+
+8.select fname,salary
+from employee
+where dno=5 and salary between 20000 and 40000
+
+9.select fname,superssn
+from employee
+where superssn is NULL
+
+10.select ssn,dname
+from employee,department
+where dno=dnumber
+
+11.select fname,address
+from employee,department
+where dnumber=dno and dname='Research'
+
+12.select pnumber,dnum,fname as Manager,address,bdate
+from project,department,employee
+where dnum=dnumber and mgrssn=ssn and plocation='Stafford'
+
+13.select e.fname||' '||e.minit||'. '||e.lname as Employee,
+s.fname||' '||s.minit||'. '||s.lname as Supervisor
+from employee e,employee s
+where e.superssn=s.ssn
+
+14.select fname as Name,dname as Department
+from employee,department
+where dno=dnumber
+
+15.select fname||' '||minit||'. '||lname as Name,pname,pnumber
+from project,department,employee,works_on
+where dnum=dnumber and dnumber=dno and pnumber=pno
+and (mgrssn=ssn or essn=ssn) and lname='Narayan'
+
+16.1.update employee
+set salary=salary*1.15
+where dno in(select dnum
+             from project,works_on
+             where pno=pnumber and pname='ProductX')
+
+16.2.select fname||' '||minit||'. '||lname as Name,salary
+from employee
+
+17.select fname,dnum,pname
+from department,employee,project,works_on
+where pnumber=pno and essn=ssn and dnumber=dno
+order by dnum,fname
+
+18.select fname
+from employee
+where salary not in(select salary
+                    from employee
+                    where dno=4)
+
+19.select fname||' '||minit||'. '||lname as Name,dependent_name as Dependent
+from employee e,dependent d
+where e.ssn=d.essn and d.dependent_name like '%'||fname||'%' and e.sex=d.sex
+
+20.select distinct essn,plocation
+from project,works_on
+where pno=pnumber and plocation in('Bellaire','Houston','Stafford')
+
+21.select sum(salary) as "Total Salary",max(salary) as "Maximum Salary",
+min(salary) as "Minimum Salary",avg(salary) as "Average Salary"
+from employee
+
+22.select sum(salary) as "Total Salary",count (*) as "No. of employees",
+max(salary) as "Maximum Salary",min(salary) as "Minimum Salary",avg(salary) as "Average Salary"
+from employee,department
+where dno=dnumber and dname='Research'
+
+23.select fname||' '||minit||'. '||lname as Name
+from employee
+where salary>(select avg(salary) 
+	      from employee 
+	      where dno=5)
+
+24.select dno as Dep_Num,count(dno)as "No of Employees",avg(salary) as "Average Salary"
+from employee
+group by dno
+
+25.select pnumber,pname,count(pnumber)as "No. of Employees"
+from project,works_on
+where pnumber = pno
+group by pnumber,pname
+
+26.update project
+set plocation='Bellaire',dnum=4
+where pnumber in(select pno
+		 from works_on
+		 group by pno
+		 having count(pno)>2)
+
+27.select dno as "Department Number",count(dno)as "No. of Employees"
+from employee
+where salary>20000
+group by dno
+having count(dno)>3
+
+28.1.insert into project
+values ('ProjectW',4,'Sugarland',3)
+
+28.2.insert into department
+values ('Marketing',3,123456789,'30/Oct/97')
+
+29.delete from dependent
+where essn=123456789
+
+30.First run the given four foreign key integrity constraint commands:
+
+alter table employee
+add constraint fk_superssn
+foreign key(superssn)
+references employee(ssn)
+on delete set NULL
+
+alter table department
+add constraint fk_mgrssn
+foreign key(mgrssn)
+references employee(ssn)
+on delete set NULL
+
+alter table works_on
+add constraint fk_essn
+foreign key(essn)
+references employee(ssn)
+on delete cascade
+
+alter table dependent
+add constraint fk_dep_essn
+foreign key(essn)
+references employee(ssn)
+on delete cascade
+
+Now run this:
+
+delete from employee
+where ssn=333445555
+
+31.1.alter table employee
+add (SNo int unique)
+
+31.2.alter table employee
+drop column SNo
